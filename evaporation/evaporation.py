@@ -381,11 +381,14 @@ class PenmanMonteith(object):
         equation is modified according to end of page 74.
         """
         if temperature.__class__.__name__ in ("tuple", "list"):
-            factor1 = (
-                self.sigma
-                * ((temperature[0] + 273.16) ** 4 + (temperature[1] + 273.16) ** 4)
-                / 2
-            )
+            with warnings.catch_warnings():
+                # See comment about RuntimeWarning on top of the file
+                warnings.simplefilter("ignore", RuntimeWarning)
+                factor1 = (
+                    self.sigma
+                    * ((temperature[0] + 273.16) ** 4 + (temperature[1] + 273.16) ** 4)
+                    / 2
+                )
         else:
             with warnings.catch_warnings():
                 # See comment about RuntimeWarning on top of the file

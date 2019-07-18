@@ -344,9 +344,13 @@ class ProcessAtPoint:
         loc1 = hts1.location
         loc2 = hts2.location
 
-        abscissas_differ = abs(loc1["abscissa"] - loc2["abscissa"]) > 1e-7
-        ordinates_differ = abs(loc1["ordinate"] - loc2["ordinate"]) > 1e-7
-        srids_differ = loc1["srid"] != loc2["srid"]
+        abscissas_differ = self._numbers_are_wrong_or_differ(
+            loc1.get("abscissa"), loc2.get("abscissa")
+        )
+        ordinates_differ = self._numbers_are_wrong_or_differ(
+            loc1.get("ordinate"), loc2.get("ordinate")
+        )
+        srids_differ = loc1.get("srid") != loc2.get("srid")
 
         if abscissas_differ or ordinates_differ or srids_differ:
             raise ValueError(
@@ -354,10 +358,15 @@ class ProcessAtPoint:
                 "files."
             )
 
+    def _numbers_are_wrong_or_differ(self, num1, num2, tolerance=1e7):
+        if num1 is None or num2 is None:
+            return True
+        return abs(num1 - num2) > tolerance
+
     def _compare_altitudes_of(self, hts1, hts2):
-        altitude1 = hts1.location["altitude"]
-        altitude2 = hts2.location["altitude"]
-        if abs(altitude1 - altitude2) > 1e-2:
+        altitude1 = hts1.location.get("altitude")
+        altitude2 = hts2.location.get("altitude")
+        if self._numbers_are_wrong_or_differ(altitude1, altitude2, 1e-2):
             raise ValueError(
                 "Incorrect or unspecified or inconsistent altitudes in the time series "
                 "files."
