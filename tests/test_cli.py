@@ -88,11 +88,11 @@ class WrongPointConfigurationTestCase(TestCase):
             f.write(
                 textwrap.dedent(
                     """\
-                base_dir = {self.tempdir}
-                albedo = 0.23
-                nighttime_solar_radiation_ratio = 0.8
-                elevation = 8
-                """
+                    base_dir = {self.tempdir}
+                    albedo = 0.23
+                    nighttime_solar_radiation_ratio = 0.8
+                    elevation = 8
+                    """
                 ).format(self=self)
             )
         with self.assertRaisesRegex(click.ClickException, "step_length"):
@@ -103,11 +103,11 @@ class WrongPointConfigurationTestCase(TestCase):
             f.write(
                 textwrap.dedent(
                     """\
-                base_dir = {self.tempdir}
-                nighttime_solar_radiation_ratio = 0.8
-                elevation = 8
-                step_length = 60
-                """
+                    base_dir = {self.tempdir}
+                    nighttime_solar_radiation_ratio = 0.8
+                    elevation = 8
+                    step_length = 60
+                    """
                 ).format(self=self)
             )
         with self.assertRaisesRegex(click.ClickException, "albedo"):
@@ -428,90 +428,58 @@ class HtsTestCase(TestCase):
         os.chdir(self.savedcwd)
         shutil.rmtree(self.tempdir)
 
-    def setup_input_file(self, basename, contents):
+    def setup_input_file(self, step, basename, value, missing=None):
         filename = os.path.join(self.tempdir, basename + ".hts")
+        timestamp = step == "hourly" and "2014-10-01 15:00" or "2014-07-06"
         with open(filename, "w") as f:
-            f.write(contents)
+            f.write("Title={}\n".format(basename.replace("_", " ").capitalize()))
+            f.write("Timezone=CVT (UTC-0100)\n")
+            if missing != "location":
+                f.write("Location=-16.25 16.217 4326\n")
+            if missing != "altitude":
+                f.write("Altitude={}\n".format(step == "hourly" and "8" or "100"))
+            f.write("\n{},{},\n".format(timestamp, value))
 
-    def test_hourly(self):
-        self.setup_input_file(
-            "temperature",
-            textwrap.dedent(
-                """\
-                                              Title=Temperature
-                                              Location=-16.25 16.217 4326
-                                              Altitude=8
-                                              Timezone=CVT (UTC-0100)
+    def setup_hourly_input_files(self, missing=None):
+        self.setup_input_file("hourly", "temperature", 38, missing=missing)
+        self.setup_input_file("hourly", "humidity", 52, missing=missing)
+        self.setup_input_file("hourly", "wind_speed", 3.3, missing=missing)
+        self.setup_input_file("hourly", "pressure", 1013, missing=missing)
+        self.setup_input_file("hourly", "solar_radiation", 681, missing=missing)
 
-                                              2014-10-01 15:00,38,
-                                              """
-            ),
-        )
-        self.setup_input_file(
-            "humidity",
-            textwrap.dedent(
-                """\
-                                              Title=Humidity
-                                              Location=-16.25 16.217 4326
-                                              Altitude=8
-                                              Timezone=CVT (UTC-0100)
+    def setup_daily_input_files(self):
+        self.setup_input_file("daily", "temperature_max", 21.5)
+        self.setup_input_file("daily", "temperature_min", 12.3)
+        self.setup_input_file("daily", "humidity_max", 84)
+        self.setup_input_file("daily", "humidity_min", 63)
+        self.setup_input_file("daily", "wind_speed", 2.078)
+        self.setup_input_file("daily", "sunshine_duration", 9.25)
 
-                                              2014-10-01 15:00,52,
-                                              """
-            ),
-        )
-        self.setup_input_file(
-            "wind_speed",
-            textwrap.dedent(
-                """\
-                                              Title=Wind speed
-                                              Location=-16.25 16.217 4326
-                                              Altitude=8
-                                              Timezone=CVT (UTC-0100)
-
-                                              2014-10-01 15:00,3.3,
-                                              """
-            ),
-        )
-        self.setup_input_file(
-            "pressure",
-            textwrap.dedent(
-                """\
-                                              Title=Pressure
-                                              Location=-16.25 16.217 4326
-                                              Altitude=8
-                                              Timezone=CVT (UTC-0100)
-
-                                              2014-10-01 15:00,1013.0,
-                                              """
-            ),
-        )
-        self.setup_input_file(
-            "solar_radiation",
-            textwrap.dedent(
-                """\
-                                              Title=Solar radiation
-                                              Location=-16.25 16.217 4326
-                                              Altitude=8
-                                              Timezone=CVT (UTC-0100)
-
-                                              2014-10-01 15:00,681.0,
-                                              """
-            ),
-        )
+    def setup_config_file(self, step_length):
         with open(self.config_file, "w") as f:
             f.write(
                 textwrap.dedent(
                     """\
-                base_dir = {self.tempdir}
-                albedo = 0.23
-                nighttime_solar_radiation_ratio = 0.8
-                step_length = 60
-                unit_converter_pressure = x / 10.0
-                unit_converter_solar_radiation = x * 3600 / 1e6
-                """
-                ).format(self=self)
+                    base_dir = {self.tempdir}
+                    albedo = 0.23
+                    step_length = {step_length}
+                    """
+                ).format(self=self, step_length=step_length)
             )
+            if step_length == 60:
+                f.write(
+                    textwrap.dedent(
+                        """\
+                        nighttime_solar_radiation_ratio = 0.8
+                        unit_converter_pressure = x / 10.0
+                        unit_converter_solar_radiation = x * 3600 / 1e6
+                        """
+                    )
+                )
+
+    def test_hourly(self):
+        self.setup_hourly_input_files()
+        self.setup_config_file(60)
 
         # Verify the output file doesn't exist yet
         result_filename = os.path.join(self.tempdir, "evaporation.hts")
@@ -532,89 +500,8 @@ class HtsTestCase(TestCase):
         pd.testing.assert_frame_equal(t.data, expected_result, check_less_precise=2)
 
     def test_daily(self):
-        self.setup_input_file(
-            "temperature_max",
-            textwrap.dedent(
-                """\
-                                              Title=Temperature Max
-                                              Location=-16.25 16.217 4326
-                                              Altitude=100
-
-                                              2014-07-06,21.5,
-                                              """
-            ),
-        )
-        self.setup_input_file(
-            "temperature_min",
-            textwrap.dedent(
-                """\
-                                              Title=Temperature Min
-                                              Location=-16.25 16.217 4326
-                                              Altitude=100
-
-                                              2014-07-06,12.3,
-                                              """
-            ),
-        )
-        self.setup_input_file(
-            "humidity_max",
-            textwrap.dedent(
-                """\
-                                              Title=Humidity Max
-                                              Location=-16.25 16.217 4326
-                                              Altitude=100
-
-                                              2014-07-06,84.0,
-                                              """
-            ),
-        )
-        self.setup_input_file(
-            "humidity_min",
-            textwrap.dedent(
-                """\
-                                              Title=Humidity Min
-                                              Location=-16.25 16.217 4326
-                                              Altitude=100
-
-                                              2014-07-06,63.0,
-                                              """
-            ),
-        )
-        self.setup_input_file(
-            "wind_speed",
-            textwrap.dedent(
-                """\
-                                              Title=Wind speed
-                                              Location=-16.25 16.217 4326
-                                              Altitude=100
-
-                                              2014-07-06,2.078,
-                                              """
-            ),
-        )
-        self.setup_input_file(
-            "sunshine_duration",
-            textwrap.dedent(
-                """\
-                                              Title=Sunshine duration
-                                              Location=-16.25 16.217 4326
-                                              Altitude=100
-
-                                              2014-07-06,9.25,
-                                              """
-            ),
-        )
-
-        with open(self.config_file, "w") as f:
-            f.write(
-                textwrap.dedent(
-                    """\
-                base_dir = {self.tempdir}
-                albedo = 0.23
-                step_length = 1440
-                """
-                ).format(self=self)
-            )
+        self.setup_daily_input_files()
+        self.setup_config_file(1440)
 
         # Verify the output file doesn't exist yet
         result_filename = os.path.join(self.tempdir, "evaporation.hts")
@@ -633,6 +520,26 @@ class HtsTestCase(TestCase):
         )
         expected_result.index.name = "date"
         pd.testing.assert_frame_equal(t.data, expected_result, check_less_precise=1)
+
+    def test_missing_location(self):
+        self.setup_hourly_input_files(missing="location")
+        self.setup_config_file(60)
+        msg = (
+            "Incorrect or unspecified or inconsistent locations in the time series "
+            "files."
+        )
+        with self.assertRaisesRegex(click.ClickException, msg):
+            cli.App(self.config_file).run()
+
+    def test_missing_altitude(self):
+        self.setup_hourly_input_files(missing="altitude")
+        self.setup_config_file(60)
+        msg = (
+            "Incorrect or unspecified or inconsistent altitudes in the time series "
+            "files."
+        )
+        with self.assertRaisesRegex(click.ClickException, msg):
+            cli.App(self.config_file).run()
 
 
 class SpatialTestCase(TestCase):
