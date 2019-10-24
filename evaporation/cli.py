@@ -325,7 +325,7 @@ class ProcessAtPoint:
         )
         if not os.path.exists(filename):
             return
-        with open(filename, "r") as f:
+        with open(filename, "r", newline="\n") as f:
             self.input_timeseries[var] = HTimeseries(f)
 
     def _check_all_timeseries_are_in_same_location_and_timezone(self):
