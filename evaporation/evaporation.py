@@ -1,6 +1,6 @@
+import datetime as dt
 import math
 import warnings
-from datetime import timedelta
 from math import cos, pi, sin, tan
 
 import numpy as np
@@ -31,7 +31,7 @@ class PenmanMonteith(object):
         albedo,
         elevation,
         latitude,
-        step_length,
+        time_step,
         longitude=None,
         nighttime_solar_radiation_ratio=None,
         unit_converters={},
@@ -41,13 +41,13 @@ class PenmanMonteith(object):
         self.elevation = elevation
         self.latitude = latitude
         self.longitude = longitude
-        self.step_length = step_length
+        self.time_step = time_step
         self.unit_converters = unit_converters
 
     def calculate(self, **kwargs):
-        if self.step_length == timedelta(minutes=60):
+        if self.time_step == "H":
             return self.calculate_hourly(**kwargs)
-        elif self.step_length == timedelta(days=1):
+        elif self.time_step == "D":
             return self.calculate_daily(**kwargs)
         else:
             raise NotImplementedError(
@@ -175,7 +175,7 @@ class PenmanMonteith(object):
         # Solar declination, eq. 24, p. 46.
         decl = 0.409 * sin(2 * pi * j / 365 - 1.39)
 
-        if self.step_length > timedelta(minutes=60):  # Daily?
+        if self.time_step == "D":  # Daily?
             phi = self.latitude / 180.0 * pi
             omega_s = np.arccos(-np.tan(phi) * tan(decl))  # Eq. 25 p. 46
 
@@ -203,13 +203,16 @@ class PenmanMonteith(object):
         lz = -utc_offset_hours * 15
 
         # Solar time angle at midpoint of the time period, eq. 31, p. 48.
-        tm = adatetime - self.step_length / 2
+        time_step_delta = (
+            self.time_step == "D" and dt.timedelta(days=1) or dt.timedelta(hours=1)
+        )
+        tm = adatetime - time_step_delta / 2
         t = tm.hour + tm.minute / 60.0
         omega = pi / 12 * ((t + 0.06667 * (lz + self.longitude) + sc) - 12)
 
         # Solar time angles at beginning and end of the period, eqs. 29 and 30,
         # p. 48.
-        t1 = self.step_length.seconds / 3600.0
+        t1 = time_step_delta.seconds / 3600.0
         omega1 = omega - pi * t1 / 24
         omega2 = omega + pi * t1 / 24
 

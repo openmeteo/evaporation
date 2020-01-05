@@ -6,7 +6,7 @@ API
 
 ``from evaporation import PenmanMonteith``
 
-.. class:: PenmanMonteith(albedo, elevation, latitude, step_length, longitude=None, nighttime_solar_radiation_ratio=None, unit_converters={})
+.. class:: PenmanMonteith(albedo, elevation, latitude, time_step, longitude=None, nighttime_solar_radiation_ratio=None, unit_converters={})
 
    Calculates evapotranspiration according to the Penman-Monteith
    equation. The methodology used is that of Allen et al. (1998).
@@ -44,10 +44,7 @@ API
    (negative for west or south). Only *latitude* needs to be specified
    for calculating daily evaporation.
 
-   *step_length* is a :class:`datetime.timedelta` object with the
-   length of the time step; so, for example, to calculate daily
-   evaporation, *step_length* must be one day, whereas for hourly
-   evaporation it must one hour.
+   *time_step* is a string: "D" for daily, "H" for hourly.
 
    In order to estimate the outgoing radiation, the ratio of incoming
    solar radiation to clear sky solar radiation is used as a

@@ -71,7 +71,7 @@ class AppConfig:
         "logfile": {"fallback": ""},
         "loglevel": {"fallback": "warning"},
         "base_dir": {"fallback": ""},
-        "step_length": {},
+        "time_step": {},
         "elevation": {"fallback": ""},
         "albedo": {},
         "nighttime_solar_radiation_ratio": {"fallback": 0.6},
@@ -136,7 +136,7 @@ class AppConfig:
 
     def _parse_config_options(self):
         self._parse_log_level()
-        self._parse_step_length()
+        self._parse_time_step()
         self._parse_unit_converters()
         self._set_is_spatial()
         self._parse_elevation()
@@ -149,16 +149,16 @@ class AppConfig:
         if self.loglevel not in log_levels:
             raise WrongValueError("loglevel must be one of " + ", ".join(log_levels))
 
-    def _parse_step_length(self):
-        s = self.options["step_length"]
-        self._check_step_length(s)
-        self.step = dt.timedelta(minutes=int(s))
+    def _parse_time_step(self):
+        s = self.options["time_step"]
+        self._check_time_step(s)
+        self.time_step = s
 
-    def _check_step_length(self, s):
-        if not s.isdecimal() or int(s) not in (60, 1440):
+    def _check_time_step(self, s):
+        if s not in ("D", "H"):
             raise WrongValueError(
                 '"{}" is not an appropriate time step; in this version of '
-                "vaporize, the step must be either 60 or 1440.".format(s)
+                "vaporize, the step must be either D or H.".format(s)
             )
 
     def _parse_unit_converters(self):
@@ -401,26 +401,25 @@ class ProcessAtPoint:
             elevation=self.location["altitude"],
             latitude=self.location["latitude"],
             longitude=self.location["longitude"],
-            step_length=self.config.step,
+            time_step=self.config.time_step,
             unit_converters=self.config.unit_converters,
         )
 
     def _prepare_resulting_htimeseries_object(self):
         self.pet = HTimeseries()
-        minutes = int(self.config.step.total_seconds() / 60)
-        self.pet.time_step = str(minutes) + ",0"
+        self.pet.time_step = self.config.time_step
         self.pet.unit = "mm"
         self.pet.timezone = self.timezone
         self.pet.variable = "Potential Evapotranspiration"
-        self.pet.precision = 2 if self.config.step == dt.timedelta(hours=1) else 1
+        self.pet.precision = 2 if self.config.time_step == "H" else 1
         self.pet.location = self.location
 
     def _determine_variables_to_use_in_calculation(self):
-        if self.config.step == dt.timedelta(hours=1):
+        if self.config.time_step == "H":
             vars = ["temperature", "humidity", "wind_speed", "solar_radiation"]
             if "pressure" in self.input_timeseries:
                 vars.append("pressure")
-        elif self.config.step == dt.timedelta(days=1):
+        elif self.config.time_step == "D":
             vars = (
                 "temperature_max",
                 "temperature_min",
@@ -550,7 +549,7 @@ class ProcessSpatial:
             elevation=self.config.elevation,
             latitude=self.latitude,
             longitude=self.longitude,
-            step_length=self.config.step,
+            time_step=self.config.time_step,
             unit_converters=self.config.unit_converters,
         )
 
@@ -571,7 +570,7 @@ class ProcessSpatial:
             self._read_input_geofile(var, timestamp)
 
     def _get_variables(self):
-        if self.config.step == dt.timedelta(minutes=60):
+        if self.config.time_step == "H":
             return {
                 "temperature",
                 "humidity",
@@ -655,7 +654,7 @@ class ProcessSpatial:
         adatetime = iso8601.parse_date(
             self._timestamp_from_filename(timestamp), default_timezone=None
         )
-        if self.config.step == dt.timedelta(minutes=1440):
+        if self.config.time_step == "D":
             adatetime = adatetime.date()
         elif adatetime.tzinfo is None:
             raise Exception(

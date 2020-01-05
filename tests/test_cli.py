@@ -70,7 +70,7 @@ class WrongPointConfigurationTestCase(TestCase):
                     albedo = 0.23
                     nighttime_solar_radiation_ratio = 0.8
                     elevation = 8
-                    step_length = 60
+                    time_step = H
                     unit_converter_pressure = x / 10.0
                     unit_converter_solar_radiation = x * 3600 /1e6
                     loglevel = NONEXISTENT_LOG_LEVEL
@@ -95,7 +95,7 @@ class WrongPointConfigurationTestCase(TestCase):
                     """
                 ).format(self=self)
             )
-        with self.assertRaisesRegex(click.ClickException, "step_length"):
+        with self.assertRaisesRegex(click.ClickException, "time_step"):
             cli.App(self.configfilename).run()
 
     def test_missing_albedo_raises_error(self):
@@ -106,7 +106,7 @@ class WrongPointConfigurationTestCase(TestCase):
                     base_dir = {self.tempdir}
                     nighttime_solar_radiation_ratio = 0.8
                     elevation = 8
-                    step_length = 60
+                    time_step = H
                     """
                 ).format(self=self)
             )
@@ -132,7 +132,7 @@ class WrongSpatialConfigurationTestCase(TestCase):
                 base_dir = {self.tempdir}
                 albedo = 0.23
                 nighttime_solar_radiation_ratio = 0.8
-                step_length = 60
+                time_step = H
                 """
                 ).format(self=self)
             )
@@ -145,7 +145,7 @@ class WrongSpatialConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = 2
                 nighttime_solar_radiation_ratio = 0.8
                 elevation = 8
@@ -161,7 +161,7 @@ class WrongSpatialConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = a01.tiff a02.tiff a11.tiff a12.tiff
                 nighttime_solar_radiation_ratio = 0.8
                 elevation = 8
@@ -178,7 +178,7 @@ class WrongSpatialConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = 1 2 0.34 0.24 0.45 0.4
                         0.34 0.12 a00.tif 0.78 0.78 2
                 nighttime_solar_radiation_ratio = 0.8
@@ -209,7 +209,7 @@ class CorrectPointConfigurationTestCase(TestCase):
                     base_dir = {self.tempdir}
                     albedo = 0.23
                     nighttime_solar_radiation_ratio = 0.8
-                    step_length = 60
+                    time_step = H
                     unit_converter_pressure = x / 10.0
                     unit_converter_solar_radiation = x * 3600 /1e6
                     """
@@ -225,7 +225,7 @@ class CorrectPointConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = 0.23
                 nighttime_solar_radiation_ratio = 0.8
                 """
@@ -273,7 +273,7 @@ class CorrectSpatialConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = a00.tif
                 nighttime_solar_radiation_ratio = 0.8
                 elevation = 8
@@ -290,7 +290,7 @@ class CorrectSpatialConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = a01.tif a02.tif a03.tif a04.tif a05.tif a06.tif
                          a07.tif a08.tif a09.tif a10.tif a11.tif a12.tif
                 nighttime_solar_radiation_ratio = 0.8
@@ -308,7 +308,7 @@ class CorrectSpatialConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = 0.23 a02.tif a03.tif a04.tif a05.tif a06.tif
                          a07.tif a08.tif a09.tif a10.tif a11.tif a12.tif
                 nighttime_solar_radiation_ratio = 0.8
@@ -326,7 +326,7 @@ class CorrectSpatialConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = 0.10 0.23 0.34 0.24 0.45 0.46
                          0.34 0.12 0.14 0.78 0.78 0.12
                 nighttime_solar_radiation_ratio = 0.8
@@ -344,7 +344,7 @@ class CorrectSpatialConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = a00.tif a00.tif a00.tif a00.tif a00.tif a00.tif
                          a00.tif a00.tif a00.tif a00.tif a00.tif a00.tif
                 nighttime_solar_radiation_ratio = 0.8
@@ -362,7 +362,7 @@ class CorrectSpatialConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = a00.tif 0.23 a00.tif a00.tif a00.tif a00.tif
                          a00.tif a00.tif 0.23 a00.tif 0.23 a00.tif
                 nighttime_solar_radiation_ratio = 0.8
@@ -380,7 +380,7 @@ class CorrectSpatialConfigurationTestCase(TestCase):
                 textwrap.dedent(
                     """\
                 base_dir = {self.tempdir}
-                step_length = 60
+                time_step = H
                 albedo = 0.10 0.23 0.34 0.24 0.45 0.46
                          0.34 0.12 0.14 0.78 0.78 0.12
                 nighttime_solar_radiation_ratio = 0.8
@@ -405,7 +405,7 @@ class CorrectConfigurationWithLogFileTestCase(TestCase):
                         base_dir = {}
                         albedo = 0.23
                         nighttime_solar_radiation_ratio = 0.8
-                        step_length = 60
+                        time_step = H
                         unit_converter_pressure = x / 10.0
                         unit_converter_solar_radiation = x * 3600 /1e6
                         logfile = {}
@@ -455,18 +455,18 @@ class HtsTestCase(TestCase):
         self.setup_input_file("daily", "wind_speed", 2.078)
         self.setup_input_file("daily", "sunshine_duration", 9.25)
 
-    def setup_config_file(self, step_length):
+    def setup_config_file(self, time_step):
         with open(self.config_file, "w") as f:
             f.write(
                 textwrap.dedent(
                     """\
                     base_dir = {self.tempdir}
                     albedo = 0.23
-                    step_length = {step_length}
+                    time_step = {time_step}
                     """
-                ).format(self=self, step_length=step_length)
+                ).format(self=self, time_step=time_step)
             )
-            if step_length == 60:
+            if time_step == "H":
                 f.write(
                     textwrap.dedent(
                         """\
@@ -479,7 +479,7 @@ class HtsTestCase(TestCase):
 
     def test_hourly(self):
         self.setup_hourly_input_files()
-        self.setup_config_file(60)
+        self.setup_config_file("H")
 
         # Verify the output file doesn't exist yet
         result_filename = os.path.join(self.tempdir, "evaporation.hts")
@@ -501,7 +501,7 @@ class HtsTestCase(TestCase):
 
     def test_daily(self):
         self.setup_daily_input_files()
-        self.setup_config_file(1440)
+        self.setup_config_file("D")
 
         # Verify the output file doesn't exist yet
         result_filename = os.path.join(self.tempdir, "evaporation.hts")
@@ -523,7 +523,7 @@ class HtsTestCase(TestCase):
 
     def test_missing_location(self):
         self.setup_hourly_input_files(missing="location")
-        self.setup_config_file(60)
+        self.setup_config_file("H")
         msg = (
             "Incorrect or unspecified or inconsistent locations in the time series "
             "files."
@@ -533,7 +533,7 @@ class HtsTestCase(TestCase):
 
     def test_missing_altitude(self):
         self.setup_hourly_input_files(missing="altitude")
-        self.setup_config_file(60)
+        self.setup_config_file("H")
         msg = (
             "Incorrect or unspecified or inconsistent altitudes in the time series "
             "files."
@@ -611,7 +611,7 @@ class SpatialTestCase(TestCase):
                 albedo = 0.23
                 nighttime_solar_radiation_ratio = 0.8
                 elevation = 8
-                step_length = 60
+                time_step = H
                 unit_converter_pressure = x / 10.0
                 unit_converter_solar_radiation = x * 3600 / 1e6
                 temperature_prefix = temperature-notz
@@ -659,7 +659,7 @@ class SpatialTestCase(TestCase):
                 base_dir = {self.tempdir}
                 albedo = 0.23
                 elevation = 100
-                step_length = 1440
+                time_step = D
                 """
                 ).format(self=self)
             )
@@ -724,7 +724,7 @@ class SpatialTestCase(TestCase):
                 base_dir = {self.tempdir}
                 albedo = 0.23
                 elevation = 100
-                step_length = 1440
+                time_step = D
                 """
                 ).format(self=self)
             )
@@ -789,7 +789,7 @@ class SpatialTestCase(TestCase):
                 albedo = 0.23
                 nighttime_solar_radiation_ratio = 0.8
                 elevation = 8
-                step_length = 60
+                time_step = H
                 unit_converter_pressure = x / 10.0
                 unit_converter_solar_radiation = x * 3600 / 1e6
                 """
@@ -857,7 +857,7 @@ class SpatialTestCase(TestCase):
                 albedo = 0.23
                 nighttime_solar_radiation_ratio = 0.8
                 elevation = 8
-                step_length = 60
+                time_step = H
                 unit_converter_solar_radiation = x * 3600 / 1e6
                 """
                 ).format(self=self)
@@ -916,7 +916,7 @@ class SpatialTestCase(TestCase):
                 albedo = 0.23
                 nighttime_solar_radiation_ratio = 0.8
                 elevation = 8
-                step_length = 60
+                time_step = H
                 unit_converter_pressure = x / 10.0
                 unit_converter_solar_radiation = x * 3600 / 1e6
                 """
@@ -950,7 +950,7 @@ class SpatialTestCase(TestCase):
                 albedo = 0.23
                 nighttime_solar_radiation_ratio = 0.8
                 elevation = dem.tif
-                step_length = 60
+                time_step = H
                 unit_converter_pressure = x / 10.0
                 unit_converter_solar_radiation = x * 3600 / 1e6
                 """
@@ -1011,7 +1011,7 @@ class SpatialTestCase(TestCase):
                 albedo = 0.23
                 nighttime_solar_radiation_ratio = 0.8
                 elevation = dem.tif
-                step_length = 60
+                time_step = H
                 unit_converter_pressure = x / 10.0
                 unit_converter_solar_radiation = x * 3600 / 1e6
                 """

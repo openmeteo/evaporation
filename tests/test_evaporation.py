@@ -42,7 +42,7 @@ class PenmanMonteithTestCase(TestCase):
             albedo=0.23,
             elevation=100,
             latitude=50.8,
-            step_length=dt.timedelta(days=1),
+            time_step="D",
             unit_converters=unit_converters,
         )
 
@@ -85,7 +85,7 @@ class PenmanMonteithTestCase(TestCase):
             albedo=0.23,
             elevation=100,
             latitude=50.8,
-            step_length=dt.timedelta(days=1),
+            time_step="D",
             unit_converters=unit_converters,
         )
         result = pm.calculate(
@@ -119,7 +119,7 @@ class PenmanMonteithTestCase(TestCase):
             elevation=8,
             latitude=16.217,
             longitude=-16.25,
-            step_length=dt.timedelta(hours=1),
+            time_step="H",
         )
 
         result = pm.calculate(
@@ -168,7 +168,7 @@ class PenmanMonteithTestCase(TestCase):
             elevation=8,
             latitude=16.217,
             longitude=np.array([-16.25, -15.25]),
-            step_length=dt.timedelta(hours=1),
+            time_step="H",
         )
         result = pm.calculate(
             temperature=np.array([38, 28]),
@@ -188,7 +188,7 @@ class PenmanMonteithTestCase(TestCase):
             elevation=8,
             latitude=16.217,
             longitude=-16.25,
-            step_length=dt.timedelta(hours=1),
+            time_step="H",
         )
 
         result = pm.calculate(
@@ -215,7 +215,7 @@ class PenmanMonteithTestCase(TestCase):
             elevation=8,
             latitude=16.217,
             longitude=np.array([-16.25, -15.25]),
-            step_length=dt.timedelta(hours=1),
+            time_step="H",
         )
         result = pm.calculate(
             temperature=np.array([38, 28]),
@@ -249,7 +249,7 @@ class PenmanMonteithTestCase(TestCase):
             elevation=8,
             latitude=16.217,
             longitude=-16.25,
-            step_length=dt.timedelta(hours=1),
+            time_step="H",
         )
 
         result = pm.calculate(

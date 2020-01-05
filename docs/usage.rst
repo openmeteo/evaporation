@@ -58,13 +58,13 @@ explanatory comments that follow it:
    albedo = 0.23
    nighttime_solar_radiation_ratio = 0.8
    elevation = 8
-   step_length = 60
+   time_step = H
    unit_converter_pressure = x / 10.0
    unit_converter_solar_radiation = x * 3600 / 1e6
 
 With the above configuration file, ``vaporize`` will log information in
 the file specified by :confval:`logfile`. It will calculate hourly
-evaporation (:confval:`step_length`) at the specified
+evaporation (:confval:`time_step`) at the specified
 :confval:`elevation` with the specified :confval:`albedo` and
 :confval:`nighttime_solar_radiation_ratio` (these three parameters can
 be GeoTIFF files instead of numbers). For some variables, the input
@@ -117,11 +117,10 @@ Parameters
    write output files.  If unspecified, it is the directory from which
    ``vaporize`` was started.
 
-.. confval:: step_length
+.. confval:: time_step
 
-   An integer indicating the number of minutes in
-   the time step. In this version, ``vaporize`` can only handle hourly
-   (60) or daily (1440) time steps.
+   A string specifying the time step.  In this version, ``vaporize`` can
+   only handle hourly (H) or daily (D) time steps.
 
 .. confval:: elevation
 
