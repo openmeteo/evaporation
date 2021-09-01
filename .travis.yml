@@ -1,7 +1,10 @@
+dist: focal
+
 language: python
 python:
-  - 3.6
-  - 3.5
+  - 3.7
+  - 3.8
+  - 3.9
 
 addons:
   apt:
@@ -11,16 +14,17 @@ addons:
 
 install:
   - pip install --upgrade pip
-  - CPLUS_INCLUDE_PATH=/usr/include/gdal C_INCLUDE_PATH=/usr/include/gdal pip install 'gdal<1.11'
-  - pip install codecov coverage isort flake8 twine
+  - CPLUS_INCLUDE_PATH=/usr/include/gdal C_INCLUDE_PATH=/usr/include/gdal pip install 'gdal==3.0.4'
+  - pip install codecov coverage isort flake8 twine black
+  - pip install -e .
 
 script:
- - if python -c "import sys; exit(not (sys.version >= '3.6'))"; then pip install black; black --check .; fi
+ - black --check .
  - flake8 --max-line-length=88 .
  - isort --recursive --check-only --diff evaporation tests
  - ./setup.py sdist bdist_wheel
  - twine check dist/*
- - coverage run --include="./*" --omit="docs/","*/tests/*","*/tests.py","setup.py" ./setup.py test
+ - coverage run --include="./*" --omit="docs/","*/tests/*","*/tests.py","setup.py" -m unittest -v
 
 after_success:
   - codecov

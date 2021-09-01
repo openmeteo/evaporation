@@ -701,8 +701,7 @@ class ProcessSpatial:
             output = None
 
     def _remove_stale_evaporation_files(self):
-        """Remove evaporation files for which no input files exist.
-        """
+        """Remove evaporation files for which no input files exist."""
         pattern = self.config.evaporation_prefix + "-*.tif"
         saved_cwd = os.getcwd()
         try:
