@@ -11,7 +11,7 @@ with open("README.rst") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-requirements = ["Click>=7.0", "iso8601", "htimeseries>=2.0.3,<3", "hspatial>=2,<3"]
+requirements = ["Click>=7.0", "iso8601", "htimeseries>=3,<4", "hspatial>=2,<3"]
 
 test_requirements = []
 
@@ -27,12 +27,13 @@ setup(
     author="Antonis Christofides",
     author_email="antonis@antonischristofides.com",
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     description="Calculation of evaporation and transpiration",
     entry_points={"console_scripts": ["vaporize=evaporation.cli:main"]},

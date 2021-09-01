@@ -702,7 +702,7 @@ class SpatialTestCase(TestCase):
 
     def test_execute_daily_with_radiation(self):
         """Same as test_execute_daily, except that we use solar radiation
-           instead of sunshine duration."""
+        instead of sunshine duration."""
         # Prepare input files
         self.timestamp = dt.date(2014, 7, 6)
         self.setup_input_file("temperature_max", np.array([[21.5, 28]]))
@@ -834,7 +834,7 @@ class SpatialTestCase(TestCase):
 
     def test_execute_hourly_no_pressure(self):
         """Same as test_execute_hourly, but does not have pressure an input;
-           therefore, it will calculate pressure itself."""
+        therefore, it will calculate pressure itself."""
         # Prepare input files
         self.timestamp = dt.datetime(2014, 10, 1, 15, 0, tzinfo=senegal_tzinfo)
         self.setup_input_file("temperature", np.array([[38.0, 28.0]]))

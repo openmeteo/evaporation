@@ -2,6 +2,12 @@
 History
 =======
 
+1.0.1 (2021-09-01)
+==================
+
+- Updated some dependencies, notably htimeseries 3. Python 3.7, 3.8 and
+  3.9 are now supported.
+
 1.0.0 (2020-01-05)
 ==================
 
