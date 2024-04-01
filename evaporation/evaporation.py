@@ -397,7 +397,7 @@ class PenmanMonteith(object):
                 # See comment about RuntimeWarning on top of the file
                 warnings.simplefilter("ignore", RuntimeWarning)
                 factor1 = self.sigma / 24 * (temperature + 273.16) ** 4
-        factor2 = 0.34 - 0.14 * (mean_actual_vapour_pressure ** 0.5)
+        factor2 = 0.34 - 0.14 * (mean_actual_vapour_pressure**0.5)
 
         # Solar radiation ratio Rs/Rs0 (Allen et al., 1998, top of p. 75).
         with warnings.catch_warnings():
