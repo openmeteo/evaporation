@@ -11,7 +11,7 @@ with open("README.rst") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-requirements = ["Click>=7.0", "iso8601", "htimeseries>=3,<4", "hspatial>=2,<3"]
+requirements = ["Click>=7.0", "iso8601", "hspatial>=3,<4"]
 
 test_requirements = []
 

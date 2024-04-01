@@ -2,6 +2,12 @@
 History
 =======
 
+2.0.0 (2024-04-01)
+==================
+
+- Updated some dependencies, notably hspatial 2, which entails
+  htimeseries 6.
+
 1.0.1 (2021-09-01)
 ==================
 

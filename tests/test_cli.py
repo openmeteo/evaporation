@@ -494,10 +494,12 @@ class HtsTestCase(TestCase):
         expected_result = pd.DataFrame(
             data={"value": [0.63], "flags": [""]},
             columns=("value", "flags"),
-            index=[dt.datetime(2014, 10, 1, 15, 0)],
+            index=[dt.datetime(2014, 10, 1, 15, 0, tzinfo=t.data.index.tz)],
         )
         expected_result.index.name = "date"
         pd.testing.assert_frame_equal(t.data, expected_result, check_less_precise=2)
+        self.assertEqual(t.data.index.tz.name, "CVT")
+        self.assertEqual(t.data.index.tz.offset, dt.timedelta(hours=-1))
 
     def test_daily(self):
         self.setup_daily_input_files()
@@ -516,10 +518,12 @@ class HtsTestCase(TestCase):
         expected_result = pd.DataFrame(
             data={"value": [3.9], "flags": [""]},
             columns=["value", "flags"],
-            index=[dt.datetime(2014, 7, 6)],
+            index=[dt.datetime(2014, 7, 6, tzinfo=t.data.index.tz)],
         )
         expected_result.index.name = "date"
         pd.testing.assert_frame_equal(t.data, expected_result, check_less_precise=1)
+        self.assertEqual(t.data.index.tz.name, "CVT")
+        self.assertEqual(t.data.index.tz.offset, dt.timedelta(hours=-1))
 
     def test_missing_location(self):
         self.setup_hourly_input_files(missing="location")

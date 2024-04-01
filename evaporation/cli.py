@@ -406,7 +406,8 @@ class ProcessAtPoint:
         )
 
     def _prepare_resulting_htimeseries_object(self):
-        self.pet = HTimeseries()
+        tzinfo = self.input_timeseries["wind_speed"].data.index.tz
+        self.pet = HTimeseries(default_tzinfo=tzinfo)
         self.pet.time_step = self.config.time_step
         self.pet.unit = "mm"
         self.pet.timezone = self.timezone
