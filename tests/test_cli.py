@@ -433,7 +433,7 @@ class HtsTestCase(TestCase):
         timestamp = step == "hourly" and "2014-10-01 15:00" or "2014-07-06"
         with open(filename, "w") as f:
             f.write("Title={}\n".format(basename.replace("_", " ").capitalize()))
-            f.write("Timezone=CVT (UTC-0100)\n")
+            f.write("Timezone=-0100\n")
             if missing != "location":
                 f.write("Location=-16.25 16.217 4326\n")
             if missing != "altitude":
@@ -498,7 +498,6 @@ class HtsTestCase(TestCase):
         )
         expected_result.index.name = "date"
         pd.testing.assert_frame_equal(t.data, expected_result, check_less_precise=2)
-        self.assertEqual(t.data.index.tz.name, "CVT")
         self.assertEqual(t.data.index.tz.offset, dt.timedelta(hours=-1))
 
     def test_daily(self):
@@ -522,7 +521,6 @@ class HtsTestCase(TestCase):
         )
         expected_result.index.name = "date"
         pd.testing.assert_frame_equal(t.data, expected_result, check_less_precise=1)
-        self.assertEqual(t.data.index.tz.name, "CVT")
         self.assertEqual(t.data.index.tz.offset, dt.timedelta(hours=-1))
 
     def test_missing_location(self):
